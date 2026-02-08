@@ -18,7 +18,7 @@
       ]
     },
     {
-      label: '카테고리',
+      label: '태그',
       href: '/admin/categories',
       icon: 'category'
     }
