@@ -34,6 +34,9 @@ export async function apiClient<T = any>(endpoint: string, options: RequestOptio
   });
 
   if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth:expired'));
+    }
     throw new AuthExpiredError();
   }
 

@@ -23,6 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      setToken(null);
+      localStorage.removeItem('accessToken');
+      router.push('/login');
+    };
+    window.addEventListener('auth:expired', handleAuthExpired);
+    return () => window.removeEventListener('auth:expired', handleAuthExpired);
+  }, [router]);
+
   const login = (tokenInfo: { accessToken: string }) => {
     setToken(tokenInfo.accessToken);
     localStorage.setItem('accessToken', tokenInfo.accessToken);

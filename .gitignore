@@ -8,6 +8,6 @@ node_modules
 !.env.example
 /.claude
 /.next
-CLAUDE.md
+CLAUDE.md 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
