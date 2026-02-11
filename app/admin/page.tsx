@@ -37,11 +37,12 @@ export default function DashboardPage() {
         ]);
 
         if (mainRes.data) {
+          const d = mainRes.data as any;
           setStats({
-            totalPosts: mainRes.data.totalPosts ?? 0,
-            totalTags: mainRes.data.totalTags ?? 0,
-            totalViews: mainRes.data.totalViews ?? 0,
-            totalComments: mainRes.data.totalComments ?? 0,
+            totalPosts: d.totalPostCount ?? d.totalPosts ?? 0,
+            totalTags: d.totalTagCount ?? d.totalTags ?? 0,
+            totalViews: d.totalViewCount ?? d.totalViews ?? 0,
+            totalComments: d.totalCommentCount ?? d.totalComments ?? 0,
           });
         }
 
