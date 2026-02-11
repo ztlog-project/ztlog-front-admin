@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
 import { tagsApi } from '@/lib/api/tags';
 import { Content, Tag } from '@/lib/api/types';
+import TipTapEditor from '@/components/TipTapEditor';
 
 export default function PostEditPage() {
   const params = useParams();
@@ -164,20 +165,14 @@ export default function PostEditPage() {
               </div>
 
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-text mb-1.5">
+                <label className="block text-sm font-medium text-text mb-1.5">
                   내용
                 </label>
-                <textarea
-                  id="content"
+                <TipTapEditor
                   value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  placeholder="게시물 내용을 입력하세요..."
-                  rows={16}
-                  required
+                  onChange={setBody}
                   disabled={saving}
-                  className="w-full px-4 py-2.5 border border-border rounded-lg text-sm text-text bg-white resize-y
-                    focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors
-                    disabled:opacity-50"
+                  placeholder="게시물 내용을 입력하세요..."
                 />
               </div>
             </div>
