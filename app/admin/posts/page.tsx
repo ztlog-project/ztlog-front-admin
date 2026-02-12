@@ -120,7 +120,7 @@ export default function PostsListPage() {
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3 w-10">
-                    #
+                    No
                   </th>
                   <th className="text-left text-xs font-medium text-text-light uppercase tracking-wider px-6 py-3">
                     제목

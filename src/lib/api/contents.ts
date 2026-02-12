@@ -3,7 +3,7 @@ import { Content, ApiResponse, PaginatedResponse } from './types';
 
 export const contentsApi = {
   getList: (page: number = 1): Promise<ApiResponse<PaginatedResponse<Content>>> =>
-    api.get('/v1/contents', { no: page }),
+    api.get('/v1/contents', { page }),
 
   getDetail: (ctntNo: number): Promise<ApiResponse<Content>> =>
     api.get(`/v1/contents/${ctntNo}`),
