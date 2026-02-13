@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface MenuItem {
   label: string;
@@ -66,8 +67,8 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
       >
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-white/10">
-          <Link href="/admin" className="text-white text-xl font-bold tracking-wide">
-            <span className="text-primary">ZT</span>Log Admin
+          <Link href="/admin">
+            <Image src="/logo.png" alt="ZTLog" width={40} height={40} />
           </Link>
         </div>
 
@@ -164,9 +165,7 @@ export default function Sidebar({ open, onOpenChange }: SidebarProps) {
         {/* Footer */}
         <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
-              A
-            </div>
+            <Image src="/profile.png" alt="profile" width={32} height={32} className="rounded-full object-cover" />
             <div>
               <p className="text-white text-sm font-medium">Admin</p>
               <p className="text-gray-400 text-xs">관리자</p>

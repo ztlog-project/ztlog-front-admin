@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 import { authApi } from '@/lib/api/auth';
 import { AuthExpiredError } from '@/lib/api/client';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeaderProps {
   onToggleSidebar: () => void;
@@ -115,9 +116,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
               }}
               className="flex items-center gap-2 hover:bg-bg rounded-lg px-2 py-1.5 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-bold">
-                A
-              </div>
+              <Image src="/profile.png" alt="profile" width={32} height={32} className="rounded-full object-cover" />
               <span className="hidden sm:block text-sm text-text font-medium">Admin</span>
               <svg className="w-4 h-4 text-text-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
