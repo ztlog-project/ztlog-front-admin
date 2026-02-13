@@ -10,12 +10,18 @@ import TipTapEditor from '@/components/TipTapEditor';
 
 export default function PostCreatePage() {
   const [title, setTitle] = useState('');
+  const [subTitle, setSubTitle] = useState('');
   const [body, setBody] = useState('');
   const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const plain = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    setSubTitle(plain.slice(0, 100));
+  }, [body]);
 
   useEffect(() => {
     async function loadTags() {
@@ -55,6 +61,7 @@ export default function PostCreatePage() {
     try {
       const data = {
         title: title.trim(),
+        subTitle: subTitle.trim(),
         body: body,
         tags: selectedTags.map((tagNo) => ({ tagNo })),
       };
@@ -70,14 +77,14 @@ export default function PostCreatePage() {
   return (
     <div>
       {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-text">새 글 작성</h1>
-          <p className="text-sm text-text-light mt-1">새로운 블로그 게시물을 작성합니다</p>
+          <p className="mt-1 text-sm text-text-light">새로운 블로그 게시물을 작성합니다</p>
         </div>
         <Link
           href="/admin/posts"
-          className="text-sm text-text-light hover:text-text transition-colors flex items-center gap-1"
+          className="flex items-center gap-1 text-sm transition-colors text-text-light hover:text-text"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -86,13 +93,13 @@ export default function PostCreatePage() {
         </Link>
       </div>
 
-      {error && <div className="mb-6 p-3 bg-danger/10 text-danger text-sm rounded-lg">{error}</div>}
+      {error && <div className="p-3 mb-6 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>}
 
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
           {/* Main Content */}
-          <div className="xl:col-span-2 space-y-6">
-            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
+          <div className="space-y-6 xl:col-span-2">
+            <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
               <div className="mb-5">
                 <label htmlFor="title" className="block text-sm font-medium text-text mb-1.5">
                   제목
@@ -128,8 +135,8 @@ export default function PostCreatePage() {
 
           {/* Sidebar Settings */}
           <div className="space-y-6">
-            <div className="bg-card rounded-lg shadow-sm border border-border p-6">
-              <h3 className="text-sm font-semibold text-text mb-4 uppercase tracking-wider">태그</h3>
+            <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
+              <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">태그</h3>
 
               {allTags.length > 0 ? (
                 <div className="flex flex-wrap gap-2 mb-6">
@@ -146,7 +153,7 @@ export default function PostCreatePage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-text-light mb-6">등록된 태그가 없습니다.</p>
+                <p className="mb-6 text-sm text-text-light">등록된 태그가 없습니다.</p>
               )}
 
               <div className="flex gap-3">
