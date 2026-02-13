@@ -1,5 +1,5 @@
 import { api } from './client';
-import { LoginResponse, ApiResponse } from './types';
+import { LoginResponse, UserInfo, ApiResponse } from './types';
 
 export const authApi = {
   login: (userId: string, password: string): Promise<ApiResponse<LoginResponse>> =>
@@ -12,5 +12,8 @@ export const authApi = {
     api.post('/v1/user/signup', { username, password }),
 
   withdraw: (): Promise<ApiResponse<void>> =>
-    api.delete('/v1/user/withdraw')
+    api.delete('/v1/user/withdraw'),
+
+  getUserInfo: (): Promise<ApiResponse<UserInfo>> =>
+    api.get('/v1/user/info')
 };

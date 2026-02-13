@@ -125,7 +125,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
 
             {showProfileMenu && (
               <div className="absolute right-0 top-full mt-2 w-48 bg-card rounded-lg shadow-lg border border-border py-2">
-                <Link href="/admin" className="block px-4 py-2 text-sm text-text hover:bg-bg transition-colors">
+                <Link href="/admin/profile" className="block px-4 py-2 text-sm text-text hover:bg-bg transition-colors">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -138,7 +138,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
                     프로필
                   </span>
                 </Link>
-                <Link href="/admin" className="block px-4 py-2 text-sm text-text hover:bg-bg transition-colors">
+                <Link href="/admin/settings" className="block px-4 py-2 text-sm text-text hover:bg-bg transition-colors">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
@@ -183,7 +183,7 @@ export default function Header({ onToggleSidebar }: HeaderProps) {
       {/* Backdrop */}
       {(showNotifications || showProfileMenu) && (
         <div
-          className="fixed inset-0 z-[5]"
+          className="fixed inset-0 z-5"
           onClick={() => {
             setShowNotifications(false);
             setShowProfileMenu(false);

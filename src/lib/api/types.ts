@@ -8,6 +8,14 @@ export interface LoginResponse {
   accessToken: string;
 }
 
+export interface UserInfo {
+  userId: string;
+  username: string;
+  grant: string;
+  inpDttm: string;
+  updDttm: string;
+}
+
 export interface Content {
   ctntNo: number;
   title: string;
