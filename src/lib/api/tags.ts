@@ -3,7 +3,7 @@ import { Tag, ApiResponse, PaginatedResponse } from './types';
 
 export const tagsApi = {
   getList: (page: number = 1): Promise<ApiResponse<PaginatedResponse<Tag>>> =>
-    api.get('/v1/tags', { no: page }),
+    api.get('/v1/tags', { page }),
 
   getDetail: (tagNo: number): Promise<ApiResponse<Tag>> =>
     api.get(`/v1/tags/${tagNo}`),

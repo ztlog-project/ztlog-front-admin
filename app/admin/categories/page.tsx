@@ -18,10 +18,9 @@ export default function CategoriesPage() {
     setError('');
     try {
       const res = await tagsApi.getList(1);
-      if ((res as any).list) {
-        setTagList((res as any).list);
-      } else if (res.data && Array.isArray((res.data as any).content)) {
-        setTagList((res.data as any).content);
+      if (res.data) {
+        const data = res.data as any;
+        setTagList(data.list || data.content || []);
       }
     } catch (e: any) {
       setError(e.message);
@@ -170,7 +169,7 @@ export default function CategoriesPage() {
                     </td>
                     <td className="px-6 py-3.5">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                        {(tag as any).contents?.length || 0}
+                        {(tag as any).tagCount ?? 0}
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-sm text-text-light">

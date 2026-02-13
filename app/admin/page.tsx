@@ -47,14 +47,14 @@ export default function DashboardPage() {
         }
 
         if (contentsRes.data) {
-          const list = (contentsRes.data as any).content || contentsRes.data;
-          setRecentPosts(Array.isArray(list) ? list.slice(0, 5) : []);
+          const data = contentsRes.data as any;
+          const list = data.list || data.content || [];
+          setRecentPosts(list.slice(0, 5));
         }
 
-        if ((tagsRes as any).list) {
-          setTags((tagsRes as any).list);
-        } else if (tagsRes.data && Array.isArray((tagsRes.data as any).content)) {
-          setTags((tagsRes.data as any).content);
+        if (tagsRes.data) {
+          const data = tagsRes.data as any;
+          setTags(data.list || data.content || []);
         }
       } catch (e: any) {
         setError(e.message);
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                   <li key={tag.tagNo} className="flex items-center justify-between">
                     <span className="text-sm text-text">{tag.tagName}</span>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                      {(tag as any).contents?.length || 0}개 게시물
+                      {(tag as any).tagCount ?? 0}개 게시물
                     </span>
                   </li>
                 ))}
