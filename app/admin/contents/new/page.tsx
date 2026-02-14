@@ -66,7 +66,7 @@ export default function PostCreatePage() {
         tags: selectedTags.map((tagNo) => ({ tagNo })),
       };
       await contentsApi.create(data);
-      router.push('/admin/posts');
+      router.push('/admin/contents');
     } catch (e: any) {
       setError(e.message || '저장 중 오류가 발생했습니다.');
     } finally {
@@ -83,7 +83,7 @@ export default function PostCreatePage() {
           <p className="mt-1 text-sm text-text-light">새로운 블로그 게시물을 작성합니다</p>
         </div>
         <Link
-          href="/admin/posts"
+          href="/admin/contents"
           className="flex items-center gap-1 text-sm transition-colors text-text-light hover:text-text"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ export default function PostCreatePage() {
                   {saving ? '저장 중...' : '저장'}
                 </button>
                 <Link
-                  href="/admin/posts"
+                  href="/admin/contents"
                   className="flex-1 py-2.5 bg-bg text-text-light rounded-lg font-medium text-sm text-center
                     hover:bg-border transition-colors flex items-center justify-center"
                 >

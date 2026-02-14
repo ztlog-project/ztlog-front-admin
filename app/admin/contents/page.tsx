@@ -68,7 +68,7 @@ export default function PostsListPage() {
           <p className="text-sm text-text-light mt-1">총 {totalCount}개의 게시물</p>
         </div>
         <Link
-          href="/admin/posts/new"
+          href="/admin/contents/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg text-sm font-medium
             hover:bg-primary-hover transition-colors"
         >
@@ -148,7 +148,7 @@ export default function PostsListPage() {
                     <td className="px-6 py-3.5 text-sm text-text-light">{post.ctntNo}</td>
                     <td className="px-6 py-3.5">
                       <Link
-                        href={`/admin/posts/${post.ctntNo}`}
+                        href={`/admin/contents/${post.ctntNo}`}
                         className="text-sm text-text hover:text-primary transition-colors font-medium"
                       >
                         {post.title}
@@ -166,7 +166,7 @@ export default function PostsListPage() {
                     <td className="px-6 py-3.5">
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/admin/posts/${post.ctntNo}`}
+                          href={`/admin/contents/${post.ctntNo}`}
                           className="p-1.5 text-text-light hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
                           title="수정"
                         >

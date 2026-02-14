@@ -113,7 +113,7 @@ export default function DashboardPage() {
         <div className="xl:col-span-2 bg-card rounded-lg shadow-sm border border-border">
           <div className="px-6 py-4 border-b border-border flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text">최근 게시물</h2>
-            <Link href="/admin/posts" className="text-sm text-primary hover:text-primary-hover transition-colors">
+            <Link href="/admin/contents" className="text-sm text-primary hover:text-primary-hover transition-colors">
               전체보기
             </Link>
           </div>
@@ -140,7 +140,7 @@ export default function DashboardPage() {
                   >
                     <td className="px-6 py-3.5">
                       <Link
-                        href={`/admin/posts/${post.ctntNo}`}
+                        href={`/admin/contents/${post.ctntNo}`}
                         className="text-sm text-text hover:text-primary transition-colors font-medium"
                       >
                         {post.title}

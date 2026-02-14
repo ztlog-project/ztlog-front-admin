@@ -83,7 +83,7 @@ export default function PostEditPage() {
         body,
         tags: selectedTags.map((tagNo) => ({ tagNo })),
       } as any);
-      router.push('/admin/posts');
+      router.push('/admin/contents');
     } catch (e: any) {
       setError(e.message || '수정 중 오류가 발생했습니다.');
       setSaving(false);
@@ -97,7 +97,7 @@ export default function PostEditPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-text">게시물 수정 (ID: {ctntNo})</h1>
-        <Link href="/admin/posts" className="text-sm text-text-light hover:underline">목록으로</Link>
+        <Link href="/admin/contents" className="text-sm text-text-light hover:underline">목록으로</Link>
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 xl:grid-cols-3">

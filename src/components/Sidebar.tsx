@@ -27,13 +27,13 @@ const menuItems: MenuItem[] = [
     label: '게시물',
     icon: 'article',
     children: [
-      { label: '목록', href: '/admin/posts' },
-      { label: '새 글 작성', href: '/admin/posts/new' }
+      { label: '목록', href: '/admin/contents' },
+      { label: '새 글 작성', href: '/admin/contents/new' }
     ]
   },
   {
     label: '태그',
-    href: '/admin/categories',
+    href: '/admin/tags',
     icon: 'category'
   },
   {
