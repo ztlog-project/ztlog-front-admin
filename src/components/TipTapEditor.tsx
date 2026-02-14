@@ -8,7 +8,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 const lowlight = createLowlight(common);
 
@@ -51,6 +51,8 @@ function Divider() {
 }
 
 export default function TipTapEditor({ value, onChange, disabled = false, placeholder = '내용을 입력하세요...' }: TipTapEditorProps) {
+  const [tab, setTab] = useState<'edit' | 'preview'>('edit');
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -86,8 +88,32 @@ export default function TipTapEditor({ value, onChange, disabled = false, placeh
 
   return (
     <div className={`border border-border rounded-lg overflow-hidden bg-white ${disabled ? 'opacity-50' : ''}`}>
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-border bg-bg">
+      {/* Tab bar */}
+      <div className="flex border-b border-border bg-bg">
+        <button
+          type="button"
+          onClick={() => setTab('edit')}
+          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
+            ${tab === 'edit'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-text-light hover:text-text'}`}
+        >
+          편집
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('preview')}
+          className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px
+            ${tab === 'preview'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-text-light hover:text-text'}`}
+        >
+          미리보기
+        </button>
+      </div>
+
+      {/* Toolbar — hidden in preview mode */}
+      <div className={`flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-border bg-bg ${tab === 'preview' ? 'hidden' : ''}`}>
         {/* Headings */}
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -296,10 +322,26 @@ export default function TipTapEditor({ value, onChange, disabled = false, placeh
       </div>
 
       {/* Editor Area */}
-      <EditorContent
-        editor={editor}
-        className="tiptap-content min-h-100 px-4 py-3 text-sm text-text focus:outline-none"
-      />
+      <div className={tab === 'preview' ? 'hidden' : ''}>
+        <EditorContent
+          editor={editor}
+          className="tiptap-content min-h-100 px-4 py-3 text-sm text-text focus:outline-none"
+        />
+      </div>
+
+      {/* Preview Area */}
+      {tab === 'preview' && (
+        <div className="min-h-100 px-4 py-3 text-sm text-text">
+          {value ? (
+            <div
+              className="tiptap-preview"
+              dangerouslySetInnerHTML={{ __html: value }}
+            />
+          ) : (
+            <p className="text-text-light italic">미리볼 내용이 없습니다.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
