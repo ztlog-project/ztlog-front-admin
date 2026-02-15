@@ -4,40 +4,52 @@ ZTLog 블로그 관리자 대시보드 프론트엔드
 
 ## 기술 스택
 
-- **SvelteKit** - 프레임워크
-- **Svelte 4** - UI 라이브러리
+- **Next.js 15** - 프레임워크 (App Router)
+- **React 19** - UI 라이브러리
+- **TypeScript** - 타입 안정성
 - **Tailwind CSS 4** - 스타일링
-- **Vite 5** - 빌드 도구
+- **TipTap** - 리치 텍스트 에디터
 
 ## 프로젝트 구조
 
 ```
+app/
+├── layout.tsx              # Root layout (AuthProvider 포함)
+├── page.tsx                # /admin으로 리다이렉트
+├── login/
+│   └── page.tsx            # 로그인 페이지
+└── admin/
+    ├── layout.tsx          # Auth Guard + Sidebar + Header
+    ├── page.tsx            # 대시보드
+    ├── contents/
+    │   ├── page.tsx        # 게시물 목록
+    │   ├── new/page.tsx    # 게시물 작성
+    │   └── [id]/page.tsx   # 게시물 수정
+    ├── tags/
+    │   └── page.tsx        # 태그 관리
+    ├── profile/
+    │   └── page.tsx        # 프로필
+    └── settings/
+        └── page.tsx        # 설정
+
 src/
+├── components/             # 공통 컴포넌트
+│   ├── Header.tsx
+│   ├── Sidebar.tsx
+│   ├── Pagination.tsx
+│   ├── StatCard.tsx
+│   └── TipTapEditor.tsx
 ├── lib/
-│   ├── api/              # API 클라이언트
-│   │   ├── client.js     # 기본 API 클라이언트 (JWT 인증, 세션 쿠키)
-│   │   ├── auth.js       # 인증 API (로그인/로그아웃/회원가입)
-│   │   ├── contents.js   # 게시물 CRUD API
-│   │   ├── tags.js       # 태그 CRUD API
-│   │   └── dashboard.js  # 대시보드 API
-│   ├── components/       # 공통 컴포넌트
-│   │   ├── Header.svelte
-│   │   ├── Sidebar.svelte
-│   │   ├── Pagination.svelte
-│   │   └── StatCard.svelte
-│   └── stores/
-│       └── auth.js       # 인증 상태 스토어
-├── routes/
-│   ├── login/            # 로그인 페이지
-│   └── admin/
-│       ├── +layout.svelte  # 어드민 레이아웃 (인증 가드)
-│       ├── +page.svelte    # 대시보드
-│       ├── posts/          # 게시물 관리
-│       │   ├── +page.svelte      # 게시물 목록
-│       │   ├── new/+page.svelte  # 게시물 작성
-│       │   └── [id]/+page.svelte # 게시물 수정
-│       └── categories/     # 태그 관리
-│           └── +page.svelte
+│   ├── api/                # API 클라이언트 (TypeScript)
+│   │   ├── client.ts       # 기본 API 클라이언트 (JWT 인증, 세션 쿠키)
+│   │   ├── auth.ts         # 인증 API (로그인/로그아웃/회원가입)
+│   │   ├── contents.ts     # 게시물 CRUD API
+│   │   ├── tags.ts         # 태그 CRUD API
+│   │   ├── dashboard.ts    # 대시보드 API
+│   │   └── types.ts        # 공통 타입 정의
+│   └── contexts/
+│       └── AuthContext.tsx  # 인증 상태 Context
+└── app.css                 # Tailwind CSS + 테마 변수
 ```
 
 ## 환경 설정
@@ -49,8 +61,8 @@ cp .env.example .env
 ```
 
 ```env
-VITE_API_BASE_URL=/admin/api           # API 기본 경로
-VITE_API_TARGET=http://localhost:8080   # 백엔드 서버 주소
+NEXT_PUBLIC_API_BASE_URL=/admin/api    # API 기본 경로
+VITE_API_TARGET=http://localhost:8080  # 백엔드 서버 주소
 ```
 
 ## 개발 서버 실행
@@ -60,19 +72,19 @@ npm install
 npm run dev
 ```
 
-개발 서버가 `http://localhost:5173`에서 실행됩니다.
-Vite 프록시가 `/admin/api/v1` 요청을 백엔드 서버로 전달합니다.
+개발 서버가 `http://localhost:3000`에서 실행됩니다.
+Next.js 리라이트가 `/admin/api/v1` 요청을 백엔드 서버로 전달합니다.
 
 ## 빌드
 
 ```bash
 npm run build
-npm run preview
+npm run start
 ```
 
 ## API 연동
 
-백엔드 API 기본 URL: `{VITE_API_TARGET}/admin/api/v1/`
+백엔드 API 기본 URL: `{API_TARGET}/admin/api/v1/`
 
 | 기능 | 메서드 | 엔드포인트 |
 |------|--------|-----------|
