@@ -46,3 +46,13 @@ export interface PaginatedResponse<T> {
 }
 
 export type ContentSearchType = 'TITLE' | 'CONTENT' | 'TITLE_CONTENT' | 'TAG';
+
+export interface Category {
+  cateNo: number;
+  cateNm: string;
+  cateDepth: number;
+  upperCateNo?: number | null;
+  dispOrd?: number;
+  useYn: 'Y' | 'N';
+  categories?: Category[];
+}
