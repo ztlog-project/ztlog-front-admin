@@ -5,7 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
 import { tagsApi } from '@/lib/api/tags';
-import { Content, Tag } from '@/lib/api/types';
+import { categoriesApi } from '@/lib/api/categories';
+import { Content, Tag, Category } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 
 export default function PostEditPage() {
@@ -22,17 +23,27 @@ export default function PostEditPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [tagSaving, setTagSaving] = useState(false);
   const [newTagName, setNewTagName] = useState('');
   const [editingTagNo, setEditingTagNo] = useState<number | null>(null);
   const [editingTagName, setEditingTagName] = useState('');
 
+  function flattenCategories(cats: Category[], depth = 0): Array<Category & { _depth: number }> {
+    return cats.flatMap(c => [
+      { ...c, _depth: depth },
+      ...(c.categories ? flattenCategories(c.categories, depth + 1) : []),
+    ]);
+  }
+
   useEffect(() => {
     async function loadData() {
       try {
-        const [contentRes, tagsRes] = await Promise.all([
+        const [contentRes, tagsRes, catesRes] = await Promise.all([
           contentsApi.getDetail(ctntNo),
           tagsApi.getList(1),
+          categoriesApi.getList(),
         ]);
 
         if (contentRes.data) {
@@ -48,11 +59,16 @@ export default function PostEditPage() {
           if (linkedTags.length > 0) {
             setSelectedTags(linkedTags.map((t: any) => t.tagNo));
           }
+          if (postData.cateNo) setSelectedCateNo(postData.cateNo);
         }
 
         const tr = tagsRes as any;
         const tagList = tr.list ?? tr.data?.list ?? tr.data?.content ?? [];
         setAllTags(tagList);
+
+        const cr = catesRes as any;
+        const cateList = cr.list ?? cr.data?.list ?? cr.data?.content ?? cr.data ?? [];
+        setAllCategories(Array.isArray(cateList) ? cateList : []);
       } catch (e: any) {
         setError(e.message);
       } finally {
@@ -131,6 +147,7 @@ export default function PostEditPage() {
         title: title.trim(),
         subTitle,
         body,
+        cateNo: selectedCateNo,
         tags: selectedTags.map((tagNo) => ({ tagNo })),
       } as any);
       router.push('/admin/contents');
@@ -175,6 +192,24 @@ export default function PostEditPage() {
         </div>
 
         <div className="space-y-6">
+          {/* 카테고리 */}
+          <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
+            <h3 className="mb-4 text-sm font-semibold">카테고리</h3>
+            <select
+              value={selectedCateNo ?? ''}
+              onChange={(e) => setSelectedCateNo(e.target.value ? Number(e.target.value) : null)}
+              disabled={saving}
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-50"
+            >
+              <option value="">카테고리 없음</option>
+              {flattenCategories(allCategories).map((cat) => (
+                <option key={cat.cateNo} value={cat.cateNo}>
+                  {'\u00A0\u00A0'.repeat(cat._depth)}{cat.cateNm}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
             <h3 className="mb-4 text-sm font-semibold">태그 설정</h3>
             <div className="flex flex-wrap gap-2 mb-3">

@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
 import { tagsApi } from '@/lib/api/tags';
-import { Tag } from '@/lib/api/types';
+import { categoriesApi } from '@/lib/api/categories';
+import { Tag, Category } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 
 export default function PostCreatePage() {
@@ -16,11 +17,20 @@ export default function PostCreatePage() {
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [tagSaving, setTagSaving] = useState(false);
   const [newTagName, setNewTagName] = useState('');
   const [editingTagNo, setEditingTagNo] = useState<number | null>(null);
   const [editingTagName, setEditingTagName] = useState('');
   const router = useRouter();
+
+  function flattenCategories(cats: Category[], depth = 0): Array<Category & { _depth: number }> {
+    return cats.flatMap(c => [
+      { ...c, _depth: depth },
+      ...(c.categories ? flattenCategories(c.categories, depth + 1) : []),
+    ]);
+  }
 
   useEffect(() => {
     const plain = body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -38,8 +48,20 @@ export default function PostCreatePage() {
     }
   }
 
+  async function loadCategories() {
+    try {
+      const res = await categoriesApi.getList();
+      const r = res as any;
+      const list = r.list ?? r.data?.list ?? r.data?.content ?? r.data ?? [];
+      setAllCategories(Array.isArray(list) ? list : []);
+    } catch (e) {
+      // 카테고리 로딩 실패 무시
+    }
+  }
+
   useEffect(() => {
     loadTags();
+    loadCategories();
   }, []);
 
   async function addTag() {
@@ -99,6 +121,7 @@ export default function PostCreatePage() {
         title: title.trim(),
         subTitle: subTitle.trim(),
         body: body,
+        cateNo: selectedCateNo,
         tags: selectedTags.map((tagNo) => ({ tagNo })),
       };
       await contentsApi.create(data);
@@ -171,6 +194,24 @@ export default function PostCreatePage() {
 
           {/* Sidebar Settings */}
           <div className="space-y-6">
+            {/* 카테고리 */}
+            <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
+              <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">카테고리</h3>
+              <select
+                value={selectedCateNo ?? ''}
+                onChange={(e) => setSelectedCateNo(e.target.value ? Number(e.target.value) : null)}
+                disabled={saving}
+                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary disabled:opacity-50"
+              >
+                <option value="">카테고리 없음</option>
+                {flattenCategories(allCategories).map((cat) => (
+                  <option key={cat.cateNo} value={cat.cateNo}>
+                    {'\u00A0\u00A0'.repeat(cat._depth)}{cat.cateNm}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="p-6 border rounded-lg shadow-sm bg-card border-border">
               <h3 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">태그</h3>
 
