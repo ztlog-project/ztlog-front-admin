@@ -10,8 +10,18 @@ interface PaginationProps {
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const pages = useMemo(() => {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }, [totalPages]);
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    const result: (number | '...')[] = [1];
+    if (currentPage > 3) result.push('...');
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+      result.push(i);
+    }
+    if (currentPage < totalPages - 2) result.push('...');
+    result.push(totalPages);
+    return result;
+  }, [currentPage, totalPages]);
 
   function goToPage(page: number) {
     if (page >= 1 && page <= totalPages) {
@@ -19,9 +29,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     }
   }
 
-  if (totalPages <= 1) {
-    return null;
-  }
+  if (totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-center gap-1 mt-6">
@@ -34,16 +42,22 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         이전
       </button>
 
-      {pages.map((p) => (
-        <button
-          key={p}
-          onClick={() => goToPage(p)}
-          className={`w-9 h-9 text-sm rounded-lg border transition-colors
-            ${p === currentPage ? 'bg-primary text-white border-primary' : 'border-border text-text hover:bg-primary hover:text-white hover:border-primary'}`}
-        >
-          {p}
-        </button>
-      ))}
+      {pages.map((p, i) =>
+        p === '...' ? (
+          <span key={`ellipsis-${i}`} className="w-9 h-9 flex items-center justify-center text-sm text-text-light">
+            …
+          </span>
+        ) : (
+          <button
+            key={p}
+            onClick={() => goToPage(p)}
+            className={`w-9 h-9 text-sm rounded-lg border transition-colors
+              ${p === currentPage ? 'bg-primary text-white border-primary' : 'border-border text-text hover:bg-primary hover:text-white hover:border-primary'}`}
+          >
+            {p}
+          </button>
+        )
+      )}
 
       <button
         onClick={() => goToPage(currentPage + 1)}

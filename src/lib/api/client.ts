@@ -51,7 +51,9 @@ export async function apiClient<T = any>(endpoint: string, options: RequestOptio
 export const api = {
   get: <T = any>(endpoint: string, params?: Record<string, any>): Promise<T> => {
     const url = params
-      ? `${endpoint}?${new URLSearchParams(params).toString()}`
+      ? `${endpoint}?${new URLSearchParams(
+          Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+        ).toString()}`
       : endpoint;
     return apiClient<T>(url);
   },

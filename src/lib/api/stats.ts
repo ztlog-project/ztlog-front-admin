@@ -7,7 +7,6 @@ export interface ViewRankingItem {
   totalViewCnt?: number;
   todayViewCnt?: number;
   viewCnt?: number;
-  [key: string]: any;
 }
 
 export interface DailyGrowthItem {
@@ -17,7 +16,6 @@ export interface DailyGrowthItem {
   commentCnt?: number;
   totalViewCnt?: number;
   totalCommentCnt?: number;
-  [key: string]: any;
 }
 
 export interface CommentStatsItem {
@@ -25,7 +23,6 @@ export interface CommentStatsItem {
   title?: string;
   commentCnt?: number;
   totalCommentCnt?: number;
-  [key: string]: any;
 }
 
 export const statsApi = {

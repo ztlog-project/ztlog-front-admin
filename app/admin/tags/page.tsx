@@ -3,8 +3,9 @@
 import { useEffect, useState, FormEvent } from 'react';
 import { tagsApi } from '@/lib/api/tags';
 import { Tag } from '@/lib/api/types';
+import ConfirmModal from '@/components/ConfirmModal';
 
-export default function CategoriesPage() {
+export default function TagsPage() {
   const [tagList, setTagList] = useState<Tag[]>([]);
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -12,6 +13,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   async function loadTags() {
     setLoading(true);
@@ -37,12 +39,13 @@ export default function CategoriesPage() {
     e.preventDefault();
     if (!newName.trim()) return;
     setSaving(true);
+    setError('');
     try {
       await tagsApi.create({ tagName: newName.trim() });
       setNewName('');
       await loadTags();
     } catch (e: any) {
-      alert('태그 추가 실패: ' + e.message);
+      setError('태그 추가 실패: ' + e.message);
     } finally {
       setSaving(false);
     }
@@ -56,12 +59,13 @@ export default function CategoriesPage() {
   async function saveEdit(tagNo: number) {
     if (!editName.trim()) return;
     setSaving(true);
+    setError('');
     try {
       await tagsApi.update({ tagNo, tagName: editName.trim() });
       setEditingId(null);
       await loadTags();
     } catch (e: any) {
-      alert('태그 수정 실패: ' + e.message);
+      setError('태그 수정 실패: ' + e.message);
     } finally {
       setSaving(false);
     }
@@ -72,17 +76,27 @@ export default function CategoriesPage() {
   }
 
   async function deleteTag(tagNo: number) {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    setError('');
     try {
       await tagsApi.delete(tagNo);
       await loadTags();
     } catch (e: any) {
-      alert('태그 삭제 실패: ' + e.message);
+      setError('태그 삭제 실패: ' + e.message);
+    } finally {
+      setConfirmDelete(null);
     }
   }
 
   return (
     <div>
+      {confirmDelete !== null && (
+        <ConfirmModal
+          message="정말 삭제하시겠습니까?"
+          onConfirm={() => deleteTag(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-text">태그 관리</h1>
@@ -92,6 +106,9 @@ export default function CategoriesPage() {
       {/* Add Tag */}
       <div className="p-6 mb-6 border rounded-lg shadow-sm bg-card border-border">
         <h2 className="mb-4 text-sm font-semibold tracking-wider uppercase text-text">새 태그 추가</h2>
+        {error && (
+          <div className="mb-3 p-3 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
+        )}
         <form onSubmit={addTag} className="flex flex-col gap-3 sm:flex-row">
           <input
             type="text"
@@ -124,8 +141,6 @@ export default function CategoriesPage() {
         <div className="flex items-center justify-center py-20">
           <div className="text-text-light">로딩 중...</div>
         </div>
-      ) : error ? (
-        <div className="p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
       ) : (
         <div className="border rounded-lg shadow-sm bg-card border-border">
           <div className="overflow-x-auto">
@@ -198,7 +213,7 @@ export default function CategoriesPage() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => deleteTag(tag.tagNo)}
+                          onClick={() => setConfirmDelete(tag.tagNo)}
                           className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10"
                           title="삭제"
                         >

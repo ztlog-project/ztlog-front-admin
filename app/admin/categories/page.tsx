@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { categoriesApi } from '@/lib/api/categories';
 import { Category } from '@/lib/api/types';
+import ConfirmModal from '@/components/ConfirmModal';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -436,6 +437,7 @@ export default function CategoriesPage() {
   const [addParent, setAddParent] = useState<number | null>(null);
   const [addName, setAddName] = useState('');
   const [addDispOrd, setAddDispOrd] = useState<number | ''>('');
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   // Edit state
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -487,15 +489,12 @@ export default function CategoriesPage() {
 
   async function handleSaveAdd() {
     if (!addName.trim()) return;
-    const validNos = allFlat.map(({ cat }) => cat.cateNo).filter((n): n is number => n != null && !isNaN(n));
-    const nextCateNo = validNos.length > 0 ? Math.max(...validNos) + 1 : 1;
     const parentDepth = addParent === null
       ? -1
       : (allFlat.find(({ cat }) => cat.cateNo === addParent)?.depth ?? 0);
     setSaving(true);
     try {
       await categoriesApi.create({
-        cateNo: nextCateNo,
         cateNm: addName.trim(),
         cateDepth: parentDepth + 2,
         upperCateNo: addParent,
@@ -505,7 +504,7 @@ export default function CategoriesPage() {
       setAddOpen(false);
       await loadCategories();
     } catch (e: any) {
-      alert('추가 실패: ' + e.message);
+      setError('추가 실패: ' + e.message);
     } finally {
       setSaving(false);
     }
@@ -539,19 +538,21 @@ export default function CategoriesPage() {
       setEditingId(null);
       await loadCategories();
     } catch (e: any) {
-      alert('수정 실패: ' + e.message);
+      setError('수정 실패: ' + e.message);
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(cateNo: number) {
-    if (!confirm('정말 삭제하시겠습니까?\n하위 카테고리도 함께 삭제될 수 있습니다.')) return;
+    setError('');
     try {
       await categoriesApi.delete(cateNo);
       await loadCategories();
     } catch (e: any) {
-      alert('삭제 실패: ' + e.message);
+      setError('삭제 실패: ' + e.message);
+    } finally {
+      setConfirmDelete(null);
     }
   }
 
@@ -564,12 +565,20 @@ export default function CategoriesPage() {
     onEditUseYnChange: setEditUseYn,
     onSaveEdit: handleSaveEdit,
     onCancelEdit: () => setEditingId(null),
-    onDelete: handleDelete,
+    onDelete: (cateNo: number) => setConfirmDelete(cateNo),
     onOpenAdd: openAdd,
   };
 
   return (
     <div>
+      {confirmDelete !== null && (
+        <ConfirmModal
+          message={'정말 삭제하시겠습니까?\n하위 카테고리도 함께 삭제될 수 있습니다.'}
+          onConfirm={() => handleDelete(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

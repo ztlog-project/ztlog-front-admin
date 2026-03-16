@@ -19,7 +19,11 @@ export interface UserInfo {
 export interface Content {
   ctntNo: number;
   title: string;
+  subTitle?: string;
+  body?: string;
   content?: string;
+  cateNo?: number | null;
+  tags?: { tagNo: number }[];
   inpUser?: string;
   inpDttm?: string;
   updDttm?: string;

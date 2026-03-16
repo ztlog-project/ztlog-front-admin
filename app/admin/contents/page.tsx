@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Pagination from '@/components/Pagination';
+import ConfirmModal from '@/components/ConfirmModal';
 import { contentsApi } from '@/lib/api/contents';
 import { Content, ContentSearchType } from '@/lib/api/types';
 
@@ -17,6 +18,7 @@ export default function PostsListPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   async function loadPosts(page: number = 1) {
     setLoading(true);
@@ -88,17 +90,27 @@ export default function PostsListPage() {
   }
 
   async function deletePost(ctntNo: number) {
-    if (!confirm('정말 삭제하시겠습니까?')) return;
+    setError('');
     try {
       await contentsApi.delete(ctntNo);
       await loadPosts(currentPage);
     } catch (e: any) {
-      alert('삭제 실패: ' + e.message);
+      setError('삭제 실패: ' + e.message);
+    } finally {
+      setConfirmDelete(null);
     }
   }
 
   return (
     <div>
+      {confirmDelete !== null && (
+        <ConfirmModal
+          message="정말 삭제하시겠습니까?"
+          onConfirm={() => deletePost(confirmDelete)}
+          onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+
       {/* Page Header */}
       <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -170,36 +182,26 @@ export default function PostsListPage() {
         </form>
       </div>
 
+      {error && (
+        <div className="mb-4 p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="text-text-light">로딩 중...</div>
         </div>
-      ) : error ? (
-        <div className="p-4 text-sm rounded-lg bg-danger/10 text-danger">{error}</div>
       ) : (
         <div className="border rounded-lg shadow-sm bg-card border-border">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="w-10 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    No
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    제목
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    작성자
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    작성일
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    수정일
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">
-                    액션
-                  </th>
+                  <th className="w-10 px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">No</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">제목</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성자</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">작성일</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">수정일</th>
+                  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-text-light">액션</th>
                 </tr>
               </thead>
               <tbody>
@@ -243,7 +245,7 @@ export default function PostsListPage() {
                           </svg>
                         </Link>
                         <button
-                          onClick={() => deletePost(post.ctntNo)}
+                          onClick={() => setConfirmDelete(post.ctntNo)}
                           className="p-1.5 text-text-light hover:text-danger transition-colors rounded-lg hover:bg-danger/10"
                           title="삭제"
                         >

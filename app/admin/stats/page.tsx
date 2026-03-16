@@ -3,8 +3,13 @@
 import { useEffect, useState } from 'react';
 import { statsApi, ViewRankingItem, DailyGrowthItem, CommentStatsItem } from '@/lib/api/stats';
 
-const today = new Date().toISOString().slice(0, 10);
-const sevenDaysAgo = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+function getToday() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getSevenDaysAgo() {
+  return new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
 
 type ActionStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -66,8 +71,8 @@ export default function StatsPage() {
   const [viewRanking, setViewRanking] = useState<ViewRankingItem[]>([]);
   const [dailyGrowth, setDailyGrowth] = useState<DailyGrowthItem[]>([]);
   const [commentStats, setCommentStats] = useState<CommentStatsItem[]>([]);
-  const [startDate, setStartDate] = useState(sevenDaysAgo);
-  const [endDate, setEndDate] = useState(today);
+  const [startDate, setStartDate] = useState(getSevenDaysAgo);
+  const [endDate, setEndDate] = useState(getToday);
   const [loading, setLoading] = useState(true);
   const [dailyLoading, setDailyLoading] = useState(false);
   const [error, setError] = useState('');
