@@ -20,10 +20,24 @@ export default function TagSelector({ selectedTags, onChange, disabled }: TagSel
 
   async function loadTags() {
     try {
-      const res = await tagsApi.getList(1);
-      const r = res as any;
-      const list = r.list ?? r.data?.list ?? r.data?.content ?? [];
-      setAllTags(list);
+      const firstRes = await tagsApi.getList(1);
+      const r = firstRes as any;
+      const firstList: Tag[] = r.data?.list ?? r.data?.content ?? r.list ?? [];
+      const totalPages: number = r.data?.totalPages ?? r.totalPages ?? 1;
+
+      if (totalPages <= 1) {
+        setAllTags(firstList);
+        return;
+      }
+
+      const rest = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) => tagsApi.getList(i + 2))
+      );
+      const allLists = rest.map(res => {
+        const rr = res as any;
+        return (rr.data?.list ?? rr.data?.content ?? rr.list ?? []) as Tag[];
+      });
+      setAllTags([...firstList, ...allLists.flat()]);
     } catch {
       // 태그 목록 로딩 실패는 무시
     }

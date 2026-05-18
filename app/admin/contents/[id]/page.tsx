@@ -4,11 +4,11 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { contentsApi } from '@/lib/api/contents';
-import { categoriesApi } from '@/lib/api/categories';
-import { Content, Category } from '@/lib/api/types';
+import { Content } from '@/lib/api/types';
 import TipTapEditor from '@/components/TipTapEditor';
 import TagSelector from '@/components/TagSelector';
 import { flattenCategories } from '@/lib/utils/category';
+import { useCategoryList } from '@/lib/hooks/useCategoryList';
 
 export default function PostEditPage() {
   const params = useParams();
@@ -24,15 +24,12 @@ export default function PostEditPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [selectedCateNo, setSelectedCateNo] = useState<number | null>(null);
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const { categories: allCategories } = useCategoryList();
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [contentRes, catesRes] = await Promise.all([
-          contentsApi.getDetail(ctntNo),
-          categoriesApi.getList(),
-        ]);
+        const contentRes = await contentsApi.getDetail(ctntNo);
 
         if (contentRes.data) {
           const postData = contentRes.data as any;
@@ -49,10 +46,6 @@ export default function PostEditPage() {
           }
           if (postData.cateNo) setSelectedCateNo(postData.cateNo);
         }
-
-        const cateData = catesRes.data as any;
-        const cateList = cateData?.list ?? cateData?.content ?? cateData ?? [];
-        setAllCategories(Array.isArray(cateList) ? cateList : []);
       } catch (e: any) {
         setError(e.message);
       } finally {

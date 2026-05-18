@@ -21,7 +21,6 @@ export interface Content {
   title: string;
   subTitle?: string;
   body?: string;
-  content?: string;
   cateNo?: number | null;
   tags?: { tagNo: number }[];
   inpUser?: string;
